@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Tanishka & Mayank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#FBF5EA;
+    --ivory-deep:#F3E9D8;
+    --maroon:#6E1E2B;
+    --maroon-deep:#4E1420;
+    --gold:#B6892E;
+    --gold-light:#D9B872;
+    --ink:#3B2517;
+    --blush:#E9D6C3;
+    --radius:22px;
+    --shadow: 0 18px 40px rgba(78,20,32,0.16);
+    --maxw: 620px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'Cormorant Garamond', serif;
+    overflow-x:hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1,h2,h3,.display{
+    font-family:'Playfair Display', serif;
+    font-weight:600;
+    margin:0;
+    color:var(--maroon-deep);
+  }
+  .container{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:0 28px;
+  }
+  a{color:inherit;}
+  button{font-family:inherit;}
+
+  /* ---------------- Ornamental divider ---------------- */
+  .flourish{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    color:var(--gold);
+    margin:18px 0;
+  }
+  .flourish svg{width:34px;height:14px;display:block;}
+  .flourish::before,.flourish::after{
+    content:"";
+    height:1px;
+    width:46px;
+    background:linear-gradient(90deg, transparent, var(--gold-light));
+  }
+  .flourish::after{background:linear-gradient(90deg, var(--gold-light), transparent);}
+
+  /* ---------------- Intro overlay: Tap to Open ---------------- */
+  #intro-overlay{
+    position:fixed; inset:0; z-index:60;
+    display:flex; align-items:center; justify-content:center;
+    background:
+      radial-gradient(circle at 50% 30%, rgba(182,137,46,0.15), transparent 60%),
+      var(--maroon-deep);
+    background-color:var(--maroon-deep);
+    background-image:
+      radial-gradient(circle at 50% 20%, rgba(182,137,46,0.20), transparent 55%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 40px);
+    cursor:pointer;
+    transition: opacity 0.9s ease;
+  }
+  #intro-overlay.hide{ opacity:0; pointer-events:none; }
+  .tap-wrap{
+    text-align:center;
+    color:var(--ivory);
+    animation: breathe 2.6s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{ transform:scale(1); opacity:0.92; }
+    50%{ transform:scale(1.045); opacity:1; }
+  }
+  .tap-icon{
+    width:46px;height:46px;
+    margin:0 auto 18px;
+    color:var(--gold-light);
+  }
+  .tap-wrap p{
+    font-family:'Playfair Display', serif;
+    font-weight:500;
+    letter-spacing:0.06em;
+    font-size:1.05rem;
+    margin:0;
+    color:var(--ivory);
+  }
+  .tap-wrap span{
+    display:block;
+    margin-top:8px;
+    font-family:'Cormorant Garamond', serif;
+    font-size:0.95rem;
+    color:var(--gold-light);
+    font-style:italic;
+  }
+
+  /* ---------------- Curtain video layer ---------------- */
+  #curtain-layer{
+    position:fixed; inset:0; z-index:55;
+    background:#1c0810;
+    display:none;
+    align-items:center; justify-content:center;
+    opacity:1;
+    transition: opacity 1s ease;
+  }
+  #curtain-layer.show{ display:flex; }
+  #curtain-layer.fade{ opacity:0; }
+  #curtain-video{
+    width:100%; height:100%;
+    object-fit:cover;
+  }
+
+  /* ---------------- Main site ---------------- */
+  #main-site{
+    opacity:0;
+    transition: opacity 1.3s ease;
+  }
+  #main-site.reveal{ opacity:1; }
+
+  section{
+    padding:96px 0;
+    position:relative;
+  }
+
+  /* ---- Hero ---- */
+  .hero{
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:60px 0;
+    background:
+      radial-gradient(ellipse at 50% 0%, var(--ivory-deep), var(--ivory) 60%);
+  }
+  .hero .eyebrow{
+    font-style:italic;
+    color:var(--gold);
+    font-size:1.15rem;
+    letter-spacing:0.02em;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 9vw, 3.6rem);
+    line-height:1.15;
+    margin:14px 0;
+  }
+  .hero .amp{
+    display:block;
+    font-style:italic;
+    color:var(--gold);
+    font-size:0.5em;
+    margin:2px 0;
+  }
+  .hero .subline{
+    font-size:1.15rem;
+    color:var(--ink);
+    max-width:360px;
+    margin:0 auto;
+  }
+  .hero .datechip{
+    margin-top:26px;
+    font-family:'Playfair Display', serif;
+    font-size:1rem;
+    letter-spacing:0.08em;
+    color:var(--maroon);
+    border:1px solid var(--gold-light);
+    border-radius:999px;
+    padding:10px 26px;
+  }
+  .scroll-cue{
+    margin-top:56px;
+    width:1px;height:46px;
+    background:linear-gradient(var(--gold), transparent);
+    position:relative;
+    animation: scrolldown 2s ease-in-out infinite;
+  }
+  @keyframes scrolldown{
+    0%{opacity:0.2; transform:translateY(-4px);}
+    50%{opacity:1;}
+    100%{opacity:0.2; transform:translateY(4px);}
+  }
+
+  /* ---- Welcome / message page ---- */
+  .welcome{ text-align:center; }
+  .welcome h2{ font-size:1.9rem; margin-bottom:22px;}
+  .welcome p{
+    font-size:1.2rem;
+    line-height:1.7;
+    color:var(--ink);
+  }
+  .welcome .signoff{
+    margin-top:26px;
+    font-style:italic;
+    color:var(--maroon);
+    font-size:1.15rem;
+  }
+
+  /* ---- Scratch card section ---- */
+  .scratch-section{
+    background:var(--ivory-deep);
+    text-align:center;
+  }
+  .scratch-label{
+    font-style:italic;
+    color:var(--maroon);
+    font-size:1.15rem;
+    margin-bottom:26px;
+  }
+  .scratch-card{
+    position:relative;
+    width:min(340px, 82vw);
+    aspect-ratio: 4 / 3;
+    margin:0 auto;
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    border:1px solid var(--gold-light);
+    background:var(--ivory);
+    touch-action:none;
+  }
+  .scratch-underlayer{
+    position:absolute; inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(160deg, var(--ivory), var(--blush));
+    padding:20px;
+  }
+  .scratch-underlayer .small{
+    font-style:italic;
+    color:var(--maroon);
+    font-size:0.95rem;
+    margin-bottom:6px;
+  }
+  .scratch-underlayer .big{
+    font-family:'Playfair Display', serif;
+    font-weight:700;
+    color:var(--maroon-deep);
+    font-size:clamp(1.5rem, 6vw, 1.9rem);
+    line-height:1.25;
+  }
+  .scratch-underlayer .yr{
+    color:var(--gold);
+  }
+  .scratch-canvas{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    display:block;
+    cursor:grab;
+  }
+  .scratch-hint{
+    margin-top:18px;
+    font-size:0.95rem;
+    color:var(--maroon);
+    opacity:0.75;
+  }
+
+  /* ---- Venue / map section ---- */
+  .venue-section{ text-align:center; }
+  .venue-section h2{ font-size:1.9rem; margin-bottom:8px;}
+  .venue-section .venue-sub{
+    font-style:italic;
+    color:var(--maroon);
+    margin-bottom:30px;
+    font-size:1.1rem;
+  }
+  .map-frame{
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    border:1px solid var(--gold-light);
+    line-height:0;
+  }
+  .map-frame iframe{
+    width:100%;
+    height:320px;
+    border:0;
+    display:block;
+  }
+  .venue-name{
+    margin-top:24px;
+    font-family:'Playfair Display', serif;
+    font-size:1.3rem;
+    color:var(--maroon-deep);
+  }
+  .venue-address{
+    font-size:1.05rem;
+    color:var(--ink);
+    margin-top:4px;
+  }
+  .directions-btn{
+    display:inline-block;
+    margin-top:22px;
+    padding:13px 34px;
+    border-radius:999px;
+    background:var(--maroon);
+    color:var(--ivory);
+    text-decoration:none;
+    font-family:'Playfair Display', serif;
+    font-size:0.98rem;
+    letter-spacing:0.04em;
+    box-shadow: 0 10px 22px rgba(110,30,43,0.30);
+    transition: transform 0.25s ease, background 0.25s ease;
+  }
+  .directions-btn:hover{
+    background:var(--maroon-deep);
+    transform:translateY(-2px);
+  }
+
+  footer{
+    text-align:center;
+    padding:40px 0 60px;
+    color:var(--gold);
+    font-style:italic;
+    font-size:1rem;
+  }
+
+  @media (min-width:700px){
+    section{padding:130px 0;}
+    .scratch-card{width:380px;}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== Tap to Open Landing ===== -->
+  <div id="intro-overlay" role="button" tabindex="0" aria-label="Tap to open invitation">
+    <div class="tap-wrap">
+      <svg class="tap-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="21" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M17 24c2-6 5-9 7-9s5 3 7 9c-2 6-5 9-7 9s-5-3-7-9z" stroke="currentColor" stroke-width="1.2"/>
+        <circle cx="24" cy="24" r="3" stroke="currentColor" stroke-width="1.2"/>
+      </svg>
+      <p>Tap to Open</p>
+      <span>Tanishka &amp; Mayank</span>
+    </div>
+  </div>
+
+  <!-- ===== Curtain reveal video ===== -->
+  <div id="curtain-layer">
+    <video id="curtain-video" src="Curtain.mp4" muted playsinline webkit-playsinline preload="auto"></video>
+  </div>
+
+  <!-- ===== Main invitation site ===== -->
+  <div id="main-site">
+
+    <!-- Page 1: Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="eyebrow">Together with their families</div>
+        <h1>Tanishka<span class="amp">&amp;</span>Mayank</h1>
+        <div class="flourish">
+          <svg viewBox="0 0 34 14" fill="none"><path d="M2 7c4-8 10-8 15-1 5-7 11-7 15 1-4 8-10 8-15 1-5 7-11 7-15-1z" stroke="currentColor" stroke-width="1"/></svg>
+        </div>
+        <p class="subline">request the honour of your presence as they begin their forever</p>
+        <div class="datechip">24 — 25 November 2026 · Jaipur</div>
+      </div>
+      <div class="scroll-cue"></div>
+    </section>
+
+    <!-- Page 2: Welcome message -->
+    <section class="welcome">
+      <div class="container">
+        <h2>With hearts full of joy</h2>
+        <p>
+          Two families, two stories, and one beautiful beginning. We invite you to be
+          part of the celebrations as we welcome Mayank into our family, and Tanishka into his.
+        </p>
+        <div class="flourish">
+          <svg viewBox="0 0 34 14" fill="none"><path d="M2 7c4-8 10-8 15-1 5-7 11-7 15 1-4 8-10 8-15 1-5 7-11 7-15-1z" stroke="currentColor" stroke-width="1"/></svg>
+        </div>
+        <p class="signoff">Save the date — details to follow</p>
+      </div>
+    </section>
+
+    <!-- Page 3: Scratch card date reveal -->
+    <section class="scratch-section">
+      <div class="container">
+        <div class="scratch-label">Scratch to reveal our date</div>
+        <div class="scratch-card" id="scratchCard">
+          <div class="scratch-underlayer">
+            <div class="small">Save the date</div>
+            <div class="big">24<sup>th</sup> – 25<sup>th</sup><br>November, <span class="yr">2026</span></div>
+          </div>
+          <canvas class="scratch-canvas" id="scratchCanvas"></canvas>
+        </div>
+        <p class="scratch-hint">Use your finger or mouse to scratch the card above</p>
+      </div>
+    </section>
+
+    <!-- Final: Venue map -->
+    <section class="venue-section">
+      <div class="container">
+        <h2>Join us in the Pink City</h2>
+        <p class="venue-sub">The celebrations unfold at</p>
+        <div class="map-frame">
+          <iframe
+            src="https://www.google.com/maps?q=ITC+Rajputana,+Jaipur&output=embed"
+            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            title="Map to ITC Rajputana, Jaipur">
+          </iframe>
+        </div>
+        <div class="venue-name">ITC Rajputana, Jaipur</div>
+        <div class="venue-address">Palace Road, Jaipur, Rajasthan</div>
+        <a class="directions-btn" href="https://www.google.com/maps/dir/?api=1&destination=ITC+Rajputana,+Jaipur" target="_blank" rel="noopener">Get Directions</a>
+      </div>
+      <footer>With love, for our forever</footer>
+    </section>
+
+  </div>
+
+<script>
+(function(){
+  var overlay = document.getElementById('intro-overlay');
+  var curtainLayer = document.getElementById('curtain-layer');
+  var video = document.getElementById('curtain-video');
+  var mainSite = document.getElementById('main-site');
+  var opened = false;
+
+  function openInvitation(){
+    if(opened) return;
+    opened = true;
+    overlay.classList.add('hide');
+    curtainLayer.classList.add('show');
+    video.currentTime = 0;
+    var playPromise = video.play();
+    if(playPromise && playPromise.catch){ playPromise.catch(function(){ finishCurtain(); }); }
+  }
+
+  function finishCurtain(){
+    curtainLayer.classList.add('fade');
+    mainSite.classList.add('reveal');
+    setTimeout(function(){
+      curtainLayer.style.display = 'none';
+    }, 1000);
+  }
+
+  video.addEventListener('ended', finishCurtain);
+
+  overlay.addEventListener('click', openInvitation);
+  overlay.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openInvitation(); }
+  });
+
+  // ---------------- Scratch card ----------------
+  var canvas = document.getElementById('scratchCanvas');
+  var ctx = canvas.getContext('2d');
+  var card = document.getElementById('scratchCard');
+  var revealed = false;
+
+  function sizeCanvas(){
+    var rect = card.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    drawFoil();
+  }
+
+  function drawFoil(){
+    var w = canvas.width, h = canvas.height;
+    var grad = ctx.createLinearGradient(0,0,w,h);
+    grad.addColorStop(0, '#D9B872');
+    grad.addColorStop(0.35, '#B6892E');
+    grad.addColorStop(0.6, '#8f6a22');
+    grad.addColorStop(1, '#6E1E2B');
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,w,h);
+
+    // subtle diagonal sheen lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 2;
+    for(var i=-h; i<w; i+=14){
+      ctx.beginPath();
+      ctx.moveTo(i,0);
+      ctx.lineTo(i+h,h);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = '600 15px "Playfair Display", serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Scratch here', w/2, h/2);
+  }
+
+  var scratching = false;
+
+  function getPos(e){
+    var rect = canvas.getBoundingClientRect();
+    var clientX = (e.touches ? e.touches[0].clientX : e.clientX);
+    var clientY = (e.touches ? e.touches[0].clientY : e.clientY);
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+
+  function scratchAt(x,y){
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x, y, Math.max(22, canvas.width*0.07), 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  function checkProgress(){
+    if(revealed) return;
+    var w = canvas.width, h = canvas.height;
+    var sampleStep = 6;
+    var data;
+    try{
+      data = ctx.getImageData(0,0,w,h).data;
+    }catch(e){ return; }
+    var total = 0, cleared = 0;
+    for(var y=0; y<h; y+=sampleStep){
+      for(var x=0; x<w; x+=sampleStep){
+        var idx = (y*w + x) * 4 + 3;
+        total++;
+        if(data[idx] < 40) cleared++;
+      }
+    }
+    if(total > 0 && (cleared/total) > 0.55){
+      revealFully();
+    }
+  }
+
+  function revealFully(){
+    revealed = true;
+    canvas.style.transition = 'opacity 0.8s ease';
+    canvas.style.opacity = '0';
+    setTimeout(function(){ canvas.style.pointerEvents = 'none'; }, 800);
+  }
+
+  function startScratch(e){
+    if(revealed) return;
+    scratching = true;
+    var p = getPos(e);
+    scratchAt(p.x, p.y);
+  }
+  function moveScratch(e){
+    if(!scratching || revealed) return;
+    e.preventDefault();
+    var p = getPos(e);
+    scratchAt(p.x, p.y);
+    checkProgress();
+  }
+  function endScratch(){
+    scratching = false;
+    checkProgress();
+  }
+
+  canvas.addEventListener('mousedown', startScratch);
+  canvas.addEventListener('mousemove', moveScratch);
+  window.addEventListener('mouseup', endScratch);
+
+  canvas.addEventListener('touchstart', startScratch, {passive:true});
+  canvas.addEventListener('touchmove', moveScratch, {passive:false});
+  canvas.addEventListener('touchend', endScratch);
+
+  window.addEventListener('resize', sizeCanvas);
+  sizeCanvas();
+})();
+</script>
+</body>
+</html>
